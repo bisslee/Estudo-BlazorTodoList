@@ -1,0 +1,78 @@
+﻿@page "/todo"
+
+@rendermode InteractiveServer
+
+<h3>To Do</h3>
+<br />
+
+<button type="button"
+        class="btn btn-primary"
+        @onclick="AddTask">
+    <i class="bi bi-plus-square"> Add new Task</i>
+</button>
+<br />
+<br />
+@if (toDoItems != null && toDoItems.Count > 0)
+{
+    <ul class="list-unstyled">
+        @foreach (var item in toDoItems)
+        {
+            <li @key="@item.Id">
+                <div class="row mb-2">
+                    <div class="col-1" style="width:25px">
+                        <input 
+                            type="checkbox"
+                            style="vertical-align:middle"
+                            class="form-check-input"
+                            @bind-value="item.IsDone" 
+                            checked="@item.IsDone"
+                        />
+                    </div>
+                    <div class="col">
+                        @if(item.IsDone)
+                        {
+                            <input type="text"
+                                   class="form-control border-0 text-decoration-line-through"
+                                   style="vertical-align:middle "
+                                   @bind-value="item.Description"
+                                   disabled
+                             />
+                        }
+                        else
+                        {
+                            <input type="text"
+                                   class="form-control border-0"
+                                   style="vertical-align:middle"
+                                   @bind-value="item.Description"
+                             />
+                        }                      
+                    </div>
+                    <div class="col">
+                        <span style="vertical-align:middle">
+                            @if (item.IsDone)
+                            {
+                                <text>
+                                    Concluído em: @item.DoneDate.ToString(
+                                        "dd 'de' MMMM 'de' yyyy 'às' HH:mm:ss",
+                                        new System.Globalization.CultureInfo("pt-BR"))
+                                </text>
+                            }
+                        </span>
+                    </div>
+                    
+                </div>
+            </li>
+        }
+    </ul>
+
+}
+@code {
+
+    private List<ToDoItem> toDoItems = ToDoItemsRepository.GetToDoItems();
+
+    private void AddTask()
+    {
+        ToDoItemsRepository.AddToDoItem(new ToDoItem { Description = "New Task" });
+        toDoItems = ToDoItemsRepository.GetToDoItems();
+    }
+}
